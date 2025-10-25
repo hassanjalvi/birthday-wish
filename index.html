@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Happy Birthday Khadija Jalvi — Mini Game</title>
+    <style>
+      :root {
+        --bg: #0f1724;
+        --card: #0b1220;
+        --accent: #ff6b6b;
+        --accent2: #ffd166;
+        --glass: rgba(255, 255, 255, 0.06);
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, Segoe UI, Roboto,
+          "Helvetica Neue", Arial;
+      }
+      body {
+        background: radial-gradient(
+            1200px 600px at 10% 10%,
+            rgba(255, 107, 107, 0.06),
+            transparent 6%
+          ),
+          radial-gradient(
+            1000px 500px at 90% 90%,
+            rgba(255, 209, 102, 0.04),
+            transparent 6%
+          ),
+          var(--bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .scene {
+        width: 100%;
+        max-width: 980px;
+        height: 640px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.03),
+          transparent 30%
+        );
+        border-radius: 18px;
+        box-shadow: 0 10px 40px rgba(2, 6, 23, 0.6);
+        overflow: hidden;
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        display: grid;
+        grid-template-columns: 380px 1fr;
+      }
+
+      .panel {
+        padding: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        background: linear-gradient(
+          180deg,
+          var(--card),
+          rgba(11, 18, 32, 0.92)
+        );
+      }
+      h1 {
+        margin: 0;
+        font-size: 22px;
+        letter-spacing: 0.4px;
+      }
+      p.lead {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .controls {
+        margin-top: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      label {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.85);
+      }
+      input[type="text"],
+      textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        background: var(--glass);
+        color: #fff;
+        outline: none;
+      }
+      textarea {
+        min-height: 90px;
+        resize: vertical;
+      }
+
+      .row {
+        display: flex;
+        gap: 10px;
+      }
+      button {
+        cursor: pointer;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 600;
+      }
+      .btn-primary {
+        background: linear-gradient(90deg, var(--accent), #ff8a80);
+        color: #111;
+      }
+      .btn-ghost {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        color: #fff;
+      }
+
+      .info {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .game {
+        position: relative;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        background: linear-gradient(
+          180deg,
+          transparent,
+          rgba(255, 255, 255, 0.02)
+        );
+      }
+
+      .sky {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      canvas#confetti {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .stage {
+        z-index: 6;
+        width: 88%;
+        max-width: 520px;
+        height: 380px;
+        border-radius: 16px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.02),
+          rgba(255, 255, 255, 0.01)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        box-shadow: inset 0 -10px 30px rgba(0, 0, 0, 0.45);
+      }
+
+      .gift {
+        width: 160px;
+        height: 160px;
+        border-radius: 14px;
+        background: linear-gradient(180deg, #ff6978, #ff4b6e);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        cursor: pointer;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+        box-shadow: 0 8px 30px rgba(255, 75, 110, 0.12);
+      }
+      .gift:hover {
+        transform: translateY(-6px);
+      }
+
+      .ribbon {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 14px;
+        width: 64px;
+        height: 20px;
+        border-radius: 6px;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.15),
+          rgba(0, 0, 0, 0.12)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #111;
+      }
+
+      .sparkles {
+        position: absolute;
+        inset: auto 12px 12px 12px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .sparkle {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.8);
+        opacity: 0.9;
+        transform: scale(0.8);
+      }
+
+      .message-box {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        padding: 12px 18px;
+        border-radius: 12px;
+        color: #fff;
+        z-index: 9;
+        max-width: 84%;
+        text-align: center;
+        backdrop-filter: blur(6px);
+      }
+
+      .balloon {
+        position: absolute;
+        width: 60px;
+        height: 80px;
+        border-radius: 50% 50% 48% 48%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+      }
+      .string {
+        width: 2px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.14);
+        position: absolute;
+        left: 50%;
+        top: 80%;
+        transform: translateX(-50%);
+      }
+
+      /* 🎉 Popup Styling */
+      .popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        backdrop-filter: blur(6px);
+        display: none;
+      }
+      .popup-content {
+        background: linear-gradient(145deg, #ff8fa3, #ffd6a5);
+        padding: 30px 40px;
+        border-radius: 18px;
+        text-align: center;
+        color: #111;
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        animation: popin 0.6s ease;
+        max-width: 400px;
+      }
+      @keyframes popin {
+        0% {
+          transform: scale(0.6);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .popup h2 {
+        font-size: 26px;
+        margin-bottom: 10px;
+      }
+      .popup p {
+        font-size: 15px;
+        line-height: 1.5;
+      }
+      .popup button {
+        margin-top: 16px;
+        background: #fff;
+        color: #ff4b6e;
+        border: none;
+        font-weight: bold;
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      @media (max-width: 880px) {
+        .scene {
+          grid-template-columns: 1fr;
+          grid-auto-rows: 1fr;
+          height: auto;
+        }
+        .panel {
+          order: 2;
+        }
+        .game {
+          order: 1;
+        }
+        .stage {
+          width: 94%;
+          height: 360px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="scene" role="application">
+      <div class="panel" aria-label="controls">
+        <h1>Happy Birthday Khadija Jalvi 🎂</h1>
+        <p class="lead">
+          Play this mini game made just for you, Khadija Jalvi! Click the gift
+          or hit
+          <strong>Play</strong> to start your surprise celebration.
+        </p>
+
+        <div class="row">
+          <button id="playBtn" class="btn-primary">Play 🎉</button>
+          <button id="resetBtn" class="btn-ghost">Reset</button>
+        </div>
+
+        <p class="info">Click the gift box or pop balloons for a surprise!</p>
+      </div>
+
+      <div class="game" aria-label="game area">
+        <div class="sky" aria-hidden="true">
+          <canvas id="confetti"></canvas>
+        </div>
+
+        <div class="stage" id="stage">
+          <div
+            class="gift"
+            id="gift"
+            role="button"
+            aria-pressed="false"
+            tabindex="0"
+          >
+            <div class="ribbon">🎀</div>
+            <div
+              style="
+                color: rgba(255, 255, 255, 0.95);
+                font-weight: 800;
+                font-size: 22px;
+              "
+            >
+              🎁
+            </div>
+          </div>
+
+          <div class="sparkles" id="sparkles" aria-hidden="true"></div>
+          <div class="message-box" id="messageBox" style="display: none"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🎉 Birthday Popup -->
+    <div class="popup" id="popup">
+      <div class="popup-content">
+        <h2>🎉 Happy Birthday Khadija Jalvi! 💖</h2>
+        <p>
+          Wishing you a magical day filled with love, laughter, and surprises!
+          You deserve all the happiness in the world today and always 🌸✨
+        </p>
+        <button id="closePopup">Close 💕</button>
+      </div>
+    </div>
+
+    <script>
+      // Confetti animation
+      (function () {
+        const canvas = document.getElementById("confetti");
+        const ctx = canvas.getContext("2d");
+        let W,
+          H,
+          particles = [],
+          running = false;
+
+        function resize() {
+          W = canvas.width = canvas.clientWidth * devicePixelRatio;
+          H = canvas.height = canvas.clientHeight * devicePixelRatio;
+          ctx.scale(devicePixelRatio, devicePixelRatio);
+        }
+        window.addEventListener("resize", resize);
+        resize();
+
+        function rand(min, max) {
+          return Math.random() * (max - min) + min;
+        }
+        function colors() {
+          return ["#ffd166", "#06d6a0", "#118ab2", "#ef476f", "#a0c4ff"][
+            Math.floor(rand(0, 5))
+          ];
+        }
+
+        function spawn(n) {
+          for (let i = 0; i < n; i++) {
+            particles.push({
+              x: rand(0, canvas.clientWidth),
+              y: rand(-20, canvas.clientHeight / 2),
+              vx: rand(-1.5, 1.5),
+              vy: rand(1, 4),
+              size: rand(6, 12),
+              color: colors(),
+              rot: rand(0, 360),
+              rotSpeed: rand(-6, 6),
+              life: rand(60, 160),
+            });
+          }
+        }
+
+        function step() {
+          ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+          for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.02;
+            p.rot += p.rotSpeed;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rot * Math.PI) / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+            ctx.restore();
+            p.life--;
+            if (p.y > canvas.clientHeight + 20 || p.life <= 0)
+              particles.splice(i, 1);
+          }
+          if (running) requestAnimationFrame(step);
+        }
+
+        window.startConfetti = function (count = 80) {
+          spawn(count);
+          if (!running) {
+            running = true;
+            step();
+            setTimeout(() => {
+              running = false;
+            }, 7000);
+          }
+        };
+      })();
+
+      // Balloons
+      (function () {
+        const stage = document.getElementById("stage");
+        let balloonCount = 6;
+        function createBalloon(i) {
+          const b = document.createElement("div");
+          b.className = "balloon";
+          const colors = [
+            "#ffadad",
+            "#ffd6a5",
+            "#fdffb6",
+            "#caffbf",
+            "#9bf6ff",
+            "#bdb2ff",
+          ];
+          b.style.left = 8 + i * 14 + "%";
+          b.style.bottom = 10 + (i % 3) * 6 + "%";
+          b.style.background = colors[i % colors.length];
+          b.innerHTML = "🎈";
+          const s = document.createElement("div");
+          s.className = "string";
+          b.appendChild(s);
+          b.addEventListener("click", () => {
+            popBalloon(b);
+          });
+          stage.appendChild(b);
+        }
+
+        function popBalloon(el) {
+          el.animate(
+            [
+              { transform: "scale(1)" },
+              { transform: "scale(1.6)" },
+              { opacity: 0 },
+            ],
+            { duration: 300, easing: "ease-out" }
+          );
+          setTimeout(() => {
+            el.remove();
+          }, 320);
+          startConfetti(12);
+        }
+
+        for (let i = 0; i < balloonCount; i++) createBalloon(i);
+      })();
+
+      // Gift actions & popup
+      (function () {
+        const playBtn = document.getElementById("playBtn");
+        const resetBtn = document.getElementById("resetBtn");
+        const gift = document.getElementById("gift");
+        const sparkles = document.getElementById("sparkles");
+        const popup = document.getElementById("popup");
+        const closePopup = document.getElementById("closePopup");
+
+        function showPopup() {
+          popup.style.display = "flex";
+        }
+
+        closePopup.addEventListener("click", () => {
+          popup.style.display = "none";
+        });
+
+        playBtn.addEventListener("click", () => {
+          gift.animate(
+            [
+              { transform: "scale(1)" },
+              { transform: "scale(1.08)" },
+              { transform: "scale(1)" },
+            ],
+            { duration: 420 }
+          );
+          sparkles.innerHTML = "";
+          for (let i = 0; i < 10; i++) {
+            const s = document.createElement("div");
+            s.className = "sparkle";
+            sparkles.appendChild(s);
+          }
+          startConfetti(120);
+          setTimeout(showPopup, 600);
+        });
+
+        resetBtn.addEventListener("click", () => {
+          popup.style.display = "none";
+        });
+
+        gift.addEventListener("click", () => {
+          gift.animate(
+            [
+              { transform: "translateY(0)" },
+              { transform: "translateY(-18px) rotate(-6deg)" },
+              { transform: "translateY(0)" },
+            ],
+            { duration: 520 }
+          );
+          startConfetti(140);
+          playBtn.click();
+        });
+      })();
+    </script>
+  </body>
+</html>
